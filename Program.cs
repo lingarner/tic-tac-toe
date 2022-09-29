@@ -1,124 +1,136 @@
 ﻿// Lindsay Garner
-// cse210 Tic Tac Toe Game 
+// cse210 Tic Tac Toe Game
 
+using System;
 
-namespace ticTacToe
+namespace TicTacToe
 {
-    class Program
+  class Program
+  {
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
+        bool winner = false;
+        string turn = "X";
+        // Process of the game
+        List<string> board = CreateBoard();
+        DisplayBoard(board);
+        int TurnsTaken = 0;
+                
+        while (!winner)
         {
-            List<string> board = GetNewBoard();
-            string currentPlayer = "x";
+            // Step 1: Display Board
+            
+            // Step 2: Get Input & Validate it
+            string choice = GetInput(turn);
 
-            while (!IsGameOver(board))
-            {
-                DisplayBoard(board);
-
-                int choice = GetMoveChoice(currentPlayer);
-                MakeMove(board, choice, currentPlayer);
-
-                currentPlayer = GetNextPlayer(currentPlayer);
-            }
-
+            // Step 3: Edit Board
+            EditBoard(choice, board, turn);
             DisplayBoard(board);
-            Console.WriteLine("Nice game!");
-        }
-        static List<string> GetNewBoard()
-        {
-            List<string> board = new List<string>();
 
-            for (int x = 1; x <= 9; x++)
-            {
-                board.Add(x.ToString());
-            }
-
-            return board;
+            // Step 4: Check Winner
+            winner = CheckingWinner(board, TurnsTaken, turn);
+            
+            // Step 5: Get turn from TurnManager
+            turn = TurnManager(turn);
+            TurnsTaken += 1;
+            
         }
 
-        static void DisplayBoard(List<string> board)
-        {
-            Console.WriteLine($"{board[0]}|{board[1]}|{board[2]}");
-            Console.WriteLine("-+-+-");
-            Console.WriteLine($"{board[3]}|{board[4]}|{board[5]}");
-            Console.WriteLine("-+-+-");
-            Console.WriteLine($"{board[6]}|{board[7]}|{board[8]}");
-        }
-        static bool IsGameOver(List<string> board)
-        {
-            bool isGameOver = false;
-
-            if (IsWinner(board, "x") || IsWinner(board, "o") || IsTie(board))
-            {
-                isGameOver = true;
-            }
-
-            return isGameOver;
-        }
-
-        static bool IsWinner(List<string> board, string player)
-        {
-               bool isWinner = false;
-
-            if ((board[0] == player && board[1] == player && board[2] == player)
-                || (board[3] == player && board[4] == player && board[5] == player)
-                || (board[6] == player && board[7] == player && board[8] == player)
-                || (board[0] == player && board[3] == player && board[6] == player)
-                || (board[1] == player && board[4] == player && board[7] == player)
-                || (board[2] == player && board[5] == player && board[8] == player)
-                || (board[0] == player && board[4] == player && board[8] == player)
-                || (board[2] == player && board[4] == player && board[6] == player)
-                )
-            {
-                isWinner = true;
-            }
-
-            return isWinner; 
-        }
-
-        static bool IsTie(List<string> board)
-        {
-            bool foundDigit = false;
-
-            foreach (string value in board)
-            {
-                if (char.IsDigit(value[0]))
-                {
-                    foundDigit = true;
-                    break;
-                }
-            }
-
-            return !foundDigit;
-        }
-
-        static string GetNextPlayer(string currentPlayer)
-        {
-            string nextPlayer = "x";
-
-            if (currentPlayer == "x")
-            {
-                nextPlayer = "o";
-            }
-
-            return nextPlayer;
-        }
-
-        static int GetMoveChoice(string currentPlayer)
-        {
-            Console.Write($"{currentPlayer}'s turn to choose a square (1-9): ");
-            string move_string = Console.ReadLine();
-
-            int choice = int.Parse(move_string);
-            return choice;
-        }
-
-        static void MakeMove(List<string> board, int choice, string currentPlayer)
-        {
-            int index = choice - 1;
-            board[index] = currentPlayer;
-        }
+        Console.WriteLine("Good Game!");
+        
     }
+
+    static List<string> CreateBoard()
+    {
+        List<string> board = new List<string> {"1","2","3","4","5","6","7","8","9"};
+
+        return board;
+    }
+
+    static void DisplayBoard(List<string> board)
+    {
+        Console.WriteLine($"{board[0]}|{board[1]}|{board[2]}");
+        Console.WriteLine("-+-+-");
+        Console.WriteLine($"{board[3]}|{board[4]}|{board[5]}");
+        Console.WriteLine("-+-+-");
+        Console.WriteLine($"{board[6]}|{board[7]}|{board[8]}");
+        Console.WriteLine("");
+    }
+
+    static string TurnManager(string turn)
+    {
+        if(turn == "X")
+        {
+            turn = "O";
+        }
+
+        else if (turn == "O")
+        {
+            turn = "X";
+        }
+
+        else
+        {
+            Console.WriteLine("error");
+        }
+
+        return turn;
+
+        
+    }
+
+    static string GetInput(string turn)
+    {
+        // Get input
+        string choice = "";
+        if(turn == "X")
+        {
+            Console.Write("X's turn to choose a square (1-9): ");
+            choice = Console.ReadLine();
+            
+        }
+        else if(turn == "O")
+        {
+            Console.Write("O's turn to choose a square (1-9): ");
+            choice = Console.ReadLine();
+        } 
+        
+        else 
+        {
+          choice = "error";   
+        }
+        return choice;
+        
+    }
+    static void EditBoard(string choice, List<string> board, string PlayerTurn)
+    {  
+       int edits = int.Parse(choice) - 1;
+       board[edits] = PlayerTurn;  
+    }
+
+    static bool CheckingWinner(List<string> board, int TurnCount, string PlayerTurn)
+    {
+        bool winner = false;
+        if ((board[0] == PlayerTurn && board[1] == PlayerTurn && board[2] == PlayerTurn)
+        ||(board[3] == PlayerTurn && board[4] == PlayerTurn && board[5] == PlayerTurn)
+        ||(board[6] == PlayerTurn && board[7] == PlayerTurn && board[8] == PlayerTurn)
+        ||(board[0] == PlayerTurn && board[3] == PlayerTurn && board[6] == PlayerTurn)
+        ||(board[1] == PlayerTurn && board[4] == PlayerTurn && board[7] == PlayerTurn)
+        ||(board[2] == PlayerTurn && board[5] == PlayerTurn && board[8] == PlayerTurn)
+        ||(board[2] == PlayerTurn && board[4] == PlayerTurn && board[6] == PlayerTurn)
+        ||(board[0] == PlayerTurn && board[4] == PlayerTurn && board[8] == PlayerTurn))
+        {
+            winner = true;
+        }
+  
+        else if (TurnCount > 9)
+        {
+            winner = true;
+        }
+
+        return winner;
+        
+    }
+
+  }
 }
-
-
